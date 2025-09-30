@@ -1,7 +1,6 @@
 {
   "name": "saveweb2zip",
   "version": "1.0.0",
-  "description": "Save a website to ZIP using Node.js",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -10,7 +9,7 @@
     "archiver": "^5.4.0",
     "cheerio": "^1.0.0-rc.12",
     "express": "^4.18.2",
-    "node-fetch": "^2.6.11",
+    "node-fetch": "^2.6.12",
     "sanitize-filename": "^1.6.3"
   }
 }
