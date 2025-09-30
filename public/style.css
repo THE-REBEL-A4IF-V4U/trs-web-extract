@@ -1,0 +1,5 @@
+body { font-family: Arial, sans-serif; background: #f0f0f0; color: #333; }
+.container { max-width: 500px; margin: 50px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
+input { width: 80%; padding: 8px; margin-right: 5px;}
+button { padding: 8px 12px;}
+#status { margin-top: 10px; }

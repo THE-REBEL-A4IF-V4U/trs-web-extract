@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Save Website to ZIP</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <h1>Save Website to ZIP</h1>
+  <form id="saveForm">
+    <input type="text" id="websiteUrl" placeholder="Enter website URL" required>
+    <button type="submit">Download ZIP</button>
+  </form>
+  <p id="status"></p>
+</div>
+
+<script>
+const form = document.getElementById("saveForm");
+const status = document.getElementById("status");
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  const url = document.getElementById("websiteUrl").value;
+  if (!url) return;
+
+  status.textContent = "Processing...";
+  
+  try {
+    const res = await fetch("/save-proxy", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url })
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch website");
+
+    const blob = await res.blob();
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "page.zip";
+    a.click();
+    status.textContent = "Download started!";
+  } catch (err) {
+    status.textContent = "Error: " + err.message;
+  }
+});
+</script>
+</body>
+</html>
