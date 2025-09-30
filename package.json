@@ -1,19 +1,18 @@
 {
   "name": "saveweb2zip",
   "version": "1.0.0",
-  "description": "Save website to ZIP via proxy",
+  "description": "Download any webpage as ZIP",
   "main": "save-proxy.js",
   "scripts": {
     "start": "node save-proxy.js"
   },
-  "author": "THE REBEL",
-  "license": "MIT",
   "dependencies": {
-    "archiver": "^6.1.0",
+    "archiver": "^5.3.1",
     "cheerio": "^1.0.0-rc.12",
     "express": "^4.18.2",
     "node-fetch": "^2.6.12",
     "sanitize-filename": "^1.6.3"
-  }
+  },
+  "author": "THE REBEL",
+  "license": "MIT"
 }
-
