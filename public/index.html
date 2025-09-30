@@ -3,47 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Save Website to ZIP</title>
-<link rel="stylesheet" href="style.css">
+<title>SaveWeb2Zip</title>
 </head>
 <body>
-<div class="container">
-  <h1>Save Website to ZIP</h1>
-  <form id="saveForm">
-    <input type="text" id="websiteUrl" placeholder="Enter website URL" required>
-    <button type="submit">Download ZIP</button>
-  </form>
-  <p id="status"></p>
-</div>
+<h1>Save Web Page to ZIP</h1>
+<form id="saveForm">
+  <input type="url" id="urlInput" placeholder="Enter website URL" required>
+  <button type="submit">Download ZIP</button>
+</form>
 
 <script>
-const form = document.getElementById("saveForm");
-const status = document.getElementById("status");
-
-form.addEventListener("submit", async e => {
+document.getElementById("saveForm").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const url = document.getElementById("websiteUrl").value;
-  if (!url) return;
-
-  status.textContent = "Processing...";
-  
+  const url = document.getElementById("urlInput").value;
   try {
     const res = await fetch("/save-proxy", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ url })
     });
-
-    if (!res.ok) throw new Error("Failed to fetch website");
-
+    if (!res.ok) throw new Error(await res.text());
     const blob = await res.blob();
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "page.zip";
-    a.click();
-    status.textContent = "Download started!";
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "page.zip";
+    link.click();
   } catch (err) {
-    status.textContent = "Error: " + err.message;
+    alert("Error: " + err.message);
   }
 });
 </script>
