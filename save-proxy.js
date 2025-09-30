@@ -1,3 +1,4 @@
+// save-proxy.js
 const express = require("express");
 const fetch = require("node-fetch");
 const archiver = require("archiver");
@@ -7,19 +8,25 @@ const { URL } = require("url");
 
 const app = express();
 app.use(express.json());
-app.use(express.static("public")); // frontend serve
+app.use(express.static("public")); // serve frontend files
 
+// Resolve relative URLs
 function resolveUrl(base, relative) {
-  try { return new URL(relative, base).href; }
-  catch { return null; }
+  try {
+    return new URL(relative, base).href;
+  } catch {
+    return null;
+  }
 }
 
+// Fetch resource as buffer
 async function fetchBuffer(url) {
   const res = await fetch(url, { headers: { "User-Agent": "SaveWeb2Zip/1.0" } });
   if (!res.ok) throw new Error(res.statusText);
   return await res.buffer();
 }
 
+// Main POST endpoint
 app.post("/save-proxy", async (req, res) => {
   const { url } = req.body;
   if (!url) return res.status(400).send("Missing url");
@@ -27,6 +34,7 @@ app.post("/save-proxy", async (req, res) => {
   try {
     const pageResp = await fetch(url);
     if (!pageResp.ok) return res.status(500).send("Failed to fetch page");
+
     const html = await pageResp.text();
     const baseUrl = pageResp.url;
 
@@ -45,10 +53,12 @@ app.post("/save-proxy", async (req, res) => {
       return pathInZip;
     }
 
+    // Collect images, CSS, JS
     $("img").each((i, el) => addIf($(el).attr("src"), "images"));
     $("link[rel=stylesheet]").each((i, el) => addIf($(el).attr("href"), "css"));
     $("script[src]").each((i, el) => addIf($(el).attr("src"), "js"));
 
+    // Setup ZIP headers
     res.setHeader("Content-Type", "application/zip");
     res.setHeader("Content-Disposition", `attachment; filename="page.zip"`);
 
@@ -62,7 +72,7 @@ app.post("/save-proxy", async (req, res) => {
         const buf = await fetchBuffer(r.abs);
         archive.append(buf, { name: r.pathInZip });
       } catch (e) {
-        console.warn("Skip resource", r.abs);
+        console.warn("Skipped resource:", r.abs);
       }
     }
 
@@ -74,4 +84,6 @@ app.post("/save-proxy", async (req, res) => {
   }
 });
 
-app.listen(4000, () => console.log("✅ Proxy server running on http://localhost:4000"));
+// Start server
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log(`✅ Proxy server running on http://localhost:${PORT}`));
